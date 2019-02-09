@@ -50,10 +50,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void debugContacts() {
-        ContentResolver resolver = getContentResolver();
-
-        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         try {
+
+            ContentResolver resolver = getContentResolver();
+
+            Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+
             while (cursor.moveToNext()) {
                 String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
@@ -67,24 +69,31 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("number:", phoneNumber);
                 }
             }
+
+            //Versuch mit spezifischer ID
+            int find = 2;
+            cursor.moveToFirst();
+            cursor.move(find - 1);
+            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+
+            //phoneCursor.moveToFirst();
+            //phoneCursor.move(find-1);
+            //String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+            Log.i("name", id + " = " + name);
+            //Log.i("number:", phoneNumber);
+
         } catch (Exception e) {
-
+            boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
+            if (permissionGranted) {
+                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Erlaubnis zum Kontaktläsa bruch i", Toast.LENGTH_LONG).show();
+            }
         }
-        //Versuch mit spezifischer ID
-        int find = 12;
-        cursor.moveToFirst();
-        cursor.move(find - 1);
-        String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-        String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-
-        Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
-
-        //phoneCursor.moveToFirst();
-        //phoneCursor.move(find-1);
-        //String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-
-        Log.i("name", id + " = " + name);
-        //Log.i("number:", phoneNumber);
     }
 
     public void debugSMS() {
