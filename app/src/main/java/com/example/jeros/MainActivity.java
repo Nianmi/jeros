@@ -55,19 +55,58 @@ public class MainActivity extends AppCompatActivity {
 
     public void createContactsList()
     {
+        ContentResolver resolver = getContentResolver();
+        ArrayList<ArrayList<String>> contacts = new ArrayList<ArrayList<String>>();
 
+        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+
+        while (cursor.moveToNext()) {
+            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+            //Log.i("name", id + " = " + name);
+
+            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+
+                /*
+                while (phoneCursor.moveToNext()) {
+                    String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    Log.i("number:", phoneNumber);
+                }*/
+
+            ArrayList<String> temp = new ArrayList<String>();
+            temp.add(id);
+            temp.add(name);
+            contacts.add(temp);
+        }
     }
 
-    public void getContactNumber(int index){
+    public int getContactNumber(int id){
 
+        ContentResolver resolver = getContentResolver();
+        ArrayList<ArrayList<String>> contacts = new ArrayList<ArrayList<String>>();
+
+        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+
+        cursor.moveToFirst();
+        cursor.move(id - 1);
+        String ident = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+        String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+        Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{ident}, null);
+
+        phoneCursor.moveToFirst();
+        int phoneNumber = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+
+        Log.i("number", Integer.toString(phoneNumber));
+        return phoneNumber;
     }
 
     public void debugContacts() {
         try {
 
             ContentResolver resolver = getContentResolver();
-        ArrayList<ArrayList<String>> contacts = new ArrayList<ArrayList<String>>();
-        ContentResolver resolver = getContentResolver();
+            ArrayList<ArrayList<String>> contacts = new ArrayList<ArrayList<String>>();
 
             Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
@@ -75,11 +114,12 @@ public class MainActivity extends AppCompatActivity {
                 String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
+                // Für ID + Namensausgabe
                 //Log.i("name", id + " = " + name);
 
                 Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
 
-                /*
+                /* //Für Handy NUmmer Ausgabe
                 while (phoneCursor.moveToNext()) {
                     String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     Log.i("number:", phoneNumber);
@@ -97,15 +137,20 @@ public class MainActivity extends AppCompatActivity {
         String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
         String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-        //Log.i("debug", "cursor ready");
         Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
-        //Log.i("debug", "phonecursor ready");
 
         phoneCursor.moveToFirst();
         String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
         Log.i("name", id + " = " + name);
         Log.i("number:", phoneNumber);
+
+        //ArrayList check
+        for(int i = 0; i < contacts.size(); i++)
+        {
+            Log.i("id", contacts.get(i).get(0));
+            Log.i("name", contacts.get(i).get(1));
+        }
 
         } catch (Exception e) {
             boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
@@ -116,12 +161,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        //ArrayList check
-        for(int i = 0; i < contacts.size(); i++)
-        {
-            Log.i("id", contacts.get(i).get(0));
-            Log.i("name", contacts.get(i).get(1));
-        }
+
     }
 
     public void debugSMS() {
