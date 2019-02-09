@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     Button SMSButtonDe, ContacsButtonDe;
@@ -47,12 +49,25 @@ public class MainActivity extends AppCompatActivity {
                 debugContacts();
             }
         });
+
+        createContactsList();
+    }
+
+    public void createContactsList()
+    {
+
+    }
+
+    public void getContactNumber(int index){
+
     }
 
     public void debugContacts() {
         try {
 
             ContentResolver resolver = getContentResolver();
+        ArrayList<ArrayList<String>> contacts = new ArrayList<ArrayList<String>>();
+        ContentResolver resolver = getContentResolver();
 
             Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
@@ -60,14 +75,20 @@ public class MainActivity extends AppCompatActivity {
                 String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                Log.i("name", id + " = " + name);
+                //Log.i("name", id + " = " + name);
 
                 Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
 
+                /*
                 while (phoneCursor.moveToNext()) {
                     String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     Log.i("number:", phoneNumber);
-                }
+                }*/
+
+                ArrayList<String> temp = new ArrayList<String>();
+                temp.add(id);
+                temp.add(name);
+                contacts.add(temp);
             }
         //Versuch mit spezifischer ID
         int find = 12;
@@ -76,9 +97,9 @@ public class MainActivity extends AppCompatActivity {
         String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
         String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-        Log.i("debug", "cursor ready");
+        //Log.i("debug", "cursor ready");
         Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
-        Log.i("debug", "phonecursor ready");
+        //Log.i("debug", "phonecursor ready");
 
         phoneCursor.moveToFirst();
         String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
@@ -93,6 +114,13 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(getApplicationContext(), "Erlaubnis zum Kontaktläsa bruch i", Toast.LENGTH_LONG).show();
             }
+        }
+
+        //ArrayList check
+        for(int i = 0; i < contacts.size(); i++)
+        {
+            Log.i("id", contacts.get(i).get(0));
+            Log.i("name", contacts.get(i).get(1));
         }
     }
 
