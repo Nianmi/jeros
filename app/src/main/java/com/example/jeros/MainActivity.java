@@ -77,14 +77,15 @@ public class MainActivity extends AppCompatActivity {
         String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
         String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
+        Log.i("debug", "cursor ready");
         Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+        Log.i("debug", "phonecursor ready");
 
-        //phoneCursor.moveToFirst();
-        //phoneCursor.move(find-1);
-        //String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+        phoneCursor.moveToFirst();
+        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
         Log.i("name", id + " = " + name);
-        //Log.i("number:", phoneNumber);
+        Log.i("number:", phoneNumber);
     }
 
     public void debugSMS() {
