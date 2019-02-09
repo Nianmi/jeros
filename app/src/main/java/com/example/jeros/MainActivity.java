@@ -22,6 +22,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     Button SMSButtonDe, ContacsButtonDe;
+    Button testButton1, testButton2, testButton3, testButton4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,35 @@ public class MainActivity extends AppCompatActivity {
         //Init GUI
         SMSButtonDe = (Button) findViewById(R.id.debugSMSButton);
         ContacsButtonDe = (Button) findViewById(R.id.debugContacs);
+        testButton1 = (Button) findViewById(R.id.button1);
+        testButton2 = (Button) findViewById(R.id.button2);
+        testButton3 = (Button) findViewById(R.id.button3);
+        testButton4 = (Button) findViewById(R.id.button4);
+
+        testButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testFinction1();
+            }
+        });
+        testButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testFinction2();
+            }
+        });
+        testButton3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testFinction3();
+            }
+        });
+        testButton4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testFinction4();
+            }
+        });
 
         SMSButtonDe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +83,18 @@ public class MainActivity extends AppCompatActivity {
         createContactsList();
     }
 
+    public void testFinction1(){
+        Toast.makeText(getApplicationContext(), "testFunction1", Toast.LENGTH_LONG).show();
+    }
+    public void testFinction2(){
+        Toast.makeText(getApplicationContext(), "testFunction2", Toast.LENGTH_LONG).show();
+    }
+    public void testFinction3(){
+        Toast.makeText(getApplicationContext(), "testFunction3", Toast.LENGTH_LONG).show();
+    }
+    public void testFinction4(){
+        Toast.makeText(getApplicationContext(), "testFunction4", Toast.LENGTH_LONG).show();
+    }
     public void createContactsList()
     {
         ContentResolver resolver = getContentResolver();
