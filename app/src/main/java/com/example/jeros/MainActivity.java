@@ -69,22 +69,22 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("number:", phoneNumber);
                 }
             }
+        //Versuch mit spezifischer ID
+        int find = 12;
+        cursor.moveToFirst();
+        cursor.move(find - 1);
+        String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+        String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-            //Versuch mit spezifischer ID
-            int find = 2;
-            cursor.moveToFirst();
-            cursor.move(find - 1);
-            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+        Log.i("debug", "cursor ready");
+        Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+        Log.i("debug", "phonecursor ready");
 
-            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+        phoneCursor.moveToFirst();
+        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-            //phoneCursor.moveToFirst();
-            //phoneCursor.move(find-1);
-            //String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-
-            Log.i("name", id + " = " + name);
-            //Log.i("number:", phoneNumber);
+        Log.i("name", id + " = " + name);
+        Log.i("number:", phoneNumber);
 
         } catch (Exception e) {
             boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
