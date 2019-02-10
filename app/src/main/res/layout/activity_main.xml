@@ -70,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="1dp"
-        android:text="Button4"
+        android:text="Start Game"
         app:layout_constraintBottom_toTopOf="@+id/debugSMSButton"
         app:layout_constraintStart_toEndOf="@+id/button3" />
 
