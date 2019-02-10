@@ -25,12 +25,13 @@ public class MainActivity extends AppCompatActivity {
 
     Button SMSButtonDe, ContacsButtonDe;
     Button selectContact, testButton2, testButton3, testButton4;
-    ArrayList<ArrayList<String>> contacts;
-    ArrayList<String> contactsNames = new ArrayList<String>();
     String[] contactNamesUse;
     boolean[] checkedItems;
-    ArrayList<Integer> outputIDs = new ArrayList<>();
+    ArrayList<ArrayList<String>> contacts;
+    ArrayList<String> contactsNames = new ArrayList<String>();
     ArrayList<String> outputNames = new ArrayList<>();
+    ArrayList<Integer> outputIDs = new ArrayList<>();
+    ArrayList<ContactsClass> listContacts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,49 +90,60 @@ public class MainActivity extends AppCompatActivity {
         });
 
         createContactsList();
+
+        checkedItems = new boolean[listContacts.size()];
+
+        contactNamesUse = new String[listContacts.size()];
+
+        for(int i =0; i< listContacts.size(); i++)
+        {
+            contactNamesUse[i] = listContacts.get(i).getName();
+        }
+
     }
 
     public void selectContactFcn(){
-        AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-        mBuilder.setTitle("Choose Contacts...");
+        try{
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+            mBuilder.setTitle("Choose Contacts...");
 
-        mBuilder.setMultiChoiceItems(contactNamesUse, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
-//                        if (isChecked) {
-//                            if (!mUserItems.contains(position)) {
-//                                mUserItems.add(position);
-//                            }
-//                        } else if (mUserItems.contains(position)) {
-//                            mUserItems.remove(position);
-//                        }
-                if(isChecked){
-                    outputIDs.add(position);
-                }else{
-                    outputIDs.remove((Integer.valueOf(position)));
+            mBuilder.setMultiChoiceItems(contactNamesUse, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
+                    if (isChecked) {
+                        outputIDs.add(position);
+                    } else {
+                        outputIDs.remove((Integer.valueOf(position)));
+                    }
                 }
-            }
-        });
+            });
 
-        mBuilder.setCancelable(false);
-        mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
-
-                for (int i = 0; i < outputIDs.size(); i++) {
-                    outputNames.add(contactNamesUse[outputIDs.get(i)]);
-                    Log.i("debug", "Name:" + contactNamesUse[outputIDs.get(i)]);
-                    Log.i("debug", "ID:" + outputIDs.get(i));
-                    String number = getContactNumber(outputIDs.get(i)-1);  //getCOntactNumber funktioniert nicht
-                    Log.i("debug", "Nummer:" + number);
+            mBuilder.setCancelable(false);
+            mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int which) {
+                    for (int i = 0; i < outputIDs.size(); i++) {
+                        outputNames.add(contactNamesUse[outputIDs.get(i)]);
+                        Log.i("debug", "Name:" + contactNamesUse[outputIDs.get(i)]);
+                        Log.i("debug", "ID:" + outputIDs.get(i));
+                        //String number = getContactNumber(outputIDs.get(i) - 1);  //getCOntactNumber funktioniert nicht
+                        //Log.i("debug", "Nummer:" + number);
+                    }
                 }
-            }
-        });
-        AlertDialog mDialog = mBuilder.create();
-        mDialog.show();
+            });
+
+            AlertDialog mDialog = mBuilder.create();
+            mDialog.show();
+
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+        }
+
     }
     public void testFinction2(){
-        Toast.makeText(getApplicationContext(), "testFunction2", Toast.LENGTH_LONG).show();
+        for (ContactsClass conti : listContacts) {
+            Log.i("Id and Name: ", conti.getId() + conti.getName());
+        }
     }
     public void testFinction3(){
         Toast.makeText(getApplicationContext(), "testFunction3", Toast.LENGTH_LONG).show();
@@ -139,48 +151,59 @@ public class MainActivity extends AppCompatActivity {
     public void testFinction4(){
         Toast.makeText(getApplicationContext(), "testFunction4", Toast.LENGTH_LONG).show();
     }
-    public void createContactsList()
-    {
-        ContentResolver resolver = getContentResolver();
-        contacts = new ArrayList<ArrayList<String>>();
 
-        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+    public void createContactsList(){
+        try{
+            ContentResolver resolver = getContentResolver();
+            Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
-        while (cursor.moveToNext()) {
-            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            while (cursor.moveToNext()) {
 
-            ArrayList<String> temp = new ArrayList<String>();
-            contactsNames.add(name);
-            temp.add(id);
-            temp.add(name);
-            contacts.add(temp);
+                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                Cursor phoneCursor = resolver.query(    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                                                        new String[]{id}, null);
+
+                ContactsClass contactsClassTemp = new ContactsClass(id);
+
+                contactsClassTemp.setName(name);
+                //contactsClassTemp.setPhoneNumber1();
+
+                listContacts.add(contactsClassTemp);
+            }
         }
-
-        contactNamesUse = new String[contactsNames.size()];
-        for(int i =0; i< contactsNames.size();i++)
-        {
-            contactNamesUse[i] = contactsNames.get(i);
+        catch (Exception e){
+            boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
+            if (permissionGranted) {
+                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Erlaubnis zum Kontaktläsa bruch i", Toast.LENGTH_LONG).show();
+            }
         }
-        checkedItems = new boolean[contacts.size()];
     }
 
-    public String getContactNumber(int id){
+    public void debugSMS() {
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            // Send Message using method of SmsManager object
+            smsManager.sendTextMessage("0792987378",
+                    null,
+                    "Debug Text",
+                    null,
+                    null);
 
-        ContentResolver resolver = getContentResolver();
-        Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-
-        cursor.moveToFirst();
-        cursor.move(id - 1);
-        String ident = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-        String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-
-        Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{ident}, null);
-
-        phoneCursor.moveToFirst();
-        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-       // Log.i("number", Integer.toString(phoneNumber));
-        return phoneNumber;
+            Toast.makeText(this, "Message sent successfully", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED;
+            if (permissionGranted) {
+                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Du musch mir erlaubnis geh zum SMS schrieba du pur", Toast.LENGTH_LONG).show();
+            }
+            // e.printStackTrace();
+        }
     }
 
     public void debugContacts() {
@@ -211,27 +234,29 @@ public class MainActivity extends AppCompatActivity {
                 temp.add(name);
                 contacts.add(temp);
             }
-        //Versuch mit spezifischer ID
-        int find = 12;
-        cursor.moveToFirst();
-        cursor.move(find - 1);
-        String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-        String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            //Versuch mit spezifischer ID
+            int find = 12;
+            cursor.moveToFirst();
+            cursor.move(find - 1);
+            String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-        Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
+            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                    new String[]{id}, null);
 
-        phoneCursor.moveToFirst();
-        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            phoneCursor.moveToFirst();
+            String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-        Log.i("name", id + " = " + name);
-        Log.i("number:", phoneNumber);
+            Log.i("name", id + " = " + name);
+            Log.i("number:", phoneNumber);
 
-        //ArrayList check
-        for(int i = 0; i < contacts.size(); i++)
-        {
-            Log.i("id", contacts.get(i).get(0));
-            Log.i("name", contacts.get(i).get(1));
-        }
+            //ArrayList check
+            for(int i = 0; i < contacts.size(); i++)
+            {
+                Log.i("id", contacts.get(i).get(0));
+                Log.i("name", contacts.get(i).get(1));
+            }
 
         } catch (Exception e) {
             boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
@@ -243,27 +268,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-    }
-
-    public void debugSMS() {
-        try {
-            SmsManager smsManager = SmsManager.getDefault();
-            // Send Message using method of SmsManager object
-            smsManager.sendTextMessage("0792987378",
-                    null,
-                    "Debug Text",
-                    null,
-                    null);
-
-            Toast.makeText(this, "Message sent successfully", Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED;
-            if (permissionGranted) {
-                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "Du musch mir erlaubnis geh zum SMS schrieba du pur", Toast.LENGTH_LONG).show();
-            }
-            // e.printStackTrace();
-        }
     }
 }
