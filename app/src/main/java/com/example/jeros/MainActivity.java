@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Integer> outputIDs = new ArrayList<>();
     ArrayList<ContactsClass> listContacts = new ArrayList<>();
     ArrayList<ContactsClass> listSelectedContacts = new ArrayList<>();
+    ArrayList<ContactsClass> listShuffledContacts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         testButton4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testFinction4();
+                startGame();
             }
         });
 
@@ -123,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
             mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int which) {
+                    listSelectedContacts.clear();
                     for (int i = 0; i < outputIDs.size(); i++) {
                         Log.i("debug", "Name:" + listContacts.get(outputIDs.get(i)).getName());
                         Log.i("debug", "ID:" + listContacts.get(outputIDs.get(i)).getId());
@@ -148,8 +151,30 @@ public class MainActivity extends AppCompatActivity {
     public void testFinction3(){
         Toast.makeText(getApplicationContext(), "testFunction3", Toast.LENGTH_LONG).show();
     }
-    public void testFinction4(){
-        Toast.makeText(getApplicationContext(), "testFunction4", Toast.LENGTH_LONG).show();
+    public void startGame(){
+        if(listSelectedContacts.size() < 3){
+            Toast.makeText(this, "You need at least 3 players", Toast.LENGTH_LONG).show();
+        }
+        else{
+            Log.i("SizeCheck", ""+listShuffledContacts.size());
+            listShuffledContacts.clear();
+            Log.i("SizeCheck", ""+listShuffledContacts.size());
+            listShuffledContacts.addAll(listSelectedContacts);
+            Log.i("SizeCheck", ""+listShuffledContacts.size());
+            Collections.shuffle(listShuffledContacts);
+            for(int i = 0; i< listShuffledContacts.size(); i++)
+            {
+                if(i == 0)
+                {
+                    //sendSMS(listShuffledContacts.get(i).getName(),listShuffledContacts.get(listShuffledContacts.size()).getPhoneNumber1());
+                    Log.i("SMS: ", "1 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(listShuffledContacts.size()-1).getName());
+                }
+                else{
+                    //sendSMS(listShuffledContacts.get(i).getName(),listShuffledContacts.get(i-1).getPhoneNumber1());
+                    Log.i("SMS: ", "2 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(i-1).getName());
+                }
+            }
+        }
     }
 
     public void createContactsList(){
