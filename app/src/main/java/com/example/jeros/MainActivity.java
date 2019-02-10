@@ -19,6 +19,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         SMSButtonDe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                debugSMS();
+
             }
         });
 
@@ -102,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
         {
             contactNamesUse[i] = listContacts.get(i).getName();
         }
-
     }
 
     public void selectContactFcn(){
@@ -212,17 +213,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void debugSMS() {
+    public void sendSmS(String messageText, String phoneNumber) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
             // Send Message using method of SmsManager object
-            smsManager.sendTextMessage("0792987378",
+            smsManager.sendTextMessage(phoneNumber,
                     null,
-                    "Debug Text",
+                    messageText,
                     null,
                     null);
 
-            Toast.makeText(this, "Message sent successfully", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Message sent successfully", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED;
             if (permissionGranted) {
@@ -230,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(getApplicationContext(), "Du musch mir erlaubnis geh zum SMS schrieba du pur", Toast.LENGTH_LONG).show();
             }
-            // e.printStackTrace();
         }
     }
 
