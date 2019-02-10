@@ -2,6 +2,7 @@ package com.example.jeros;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
@@ -9,6 +10,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +24,13 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     Button SMSButtonDe, ContacsButtonDe;
-    Button testButton1, testButton2, testButton3, testButton4;
+    Button selectContact, testButton2, testButton3, testButton4;
+    ArrayList<ArrayList<String>> contacts;
+    ArrayList<String> contactsNames = new ArrayList<String>();
+    String[] contactNamesUse;
+    boolean[] checkedItems;
+    ArrayList<Integer> outputIDs = new ArrayList<>();
+    ArrayList<String> outputNames = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +44,15 @@ public class MainActivity extends AppCompatActivity {
         //Init GUI
         SMSButtonDe = (Button) findViewById(R.id.debugSMSButton);
         ContacsButtonDe = (Button) findViewById(R.id.debugContacs);
-        testButton1 = (Button) findViewById(R.id.button1);
+        selectContact = (Button) findViewById(R.id.button1);
         testButton2 = (Button) findViewById(R.id.button2);
         testButton3 = (Button) findViewById(R.id.button3);
         testButton4 = (Button) findViewById(R.id.button4);
 
-        testButton1.setOnClickListener(new View.OnClickListener() {
+        selectContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testFinction1();
+                selectContactFcn();
             }
         });
         testButton2.setOnClickListener(new View.OnClickListener() {
@@ -83,8 +91,44 @@ public class MainActivity extends AppCompatActivity {
         createContactsList();
     }
 
-    public void testFinction1(){
-        Toast.makeText(getApplicationContext(), "testFunction1", Toast.LENGTH_LONG).show();
+    public void selectContactFcn(){
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+        mBuilder.setTitle("Choose Contacts...");
+
+        mBuilder.setMultiChoiceItems(contactNamesUse, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int position, boolean isChecked) {
+//                        if (isChecked) {
+//                            if (!mUserItems.contains(position)) {
+//                                mUserItems.add(position);
+//                            }
+//                        } else if (mUserItems.contains(position)) {
+//                            mUserItems.remove(position);
+//                        }
+                if(isChecked){
+                    outputIDs.add(position);
+                }else{
+                    outputIDs.remove((Integer.valueOf(position)));
+                }
+            }
+        });
+
+        mBuilder.setCancelable(false);
+        mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+
+                for (int i = 0; i < outputIDs.size(); i++) {
+                    outputNames.add(contactNamesUse[outputIDs.get(i)]);
+                    Log.i("debug", "Name:" + contactNamesUse[outputIDs.get(i)]);
+                    Log.i("debug", "ID:" + outputIDs.get(i));
+                    String number = getContactNumber(outputIDs.get(i)-1);  //getCOntactNumber funktioniert nicht
+                    Log.i("debug", "Nummer:" + number);
+                }
+            }
+        });
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
     }
     public void testFinction2(){
         Toast.makeText(getApplicationContext(), "testFunction2", Toast.LENGTH_LONG).show();
@@ -98,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
     public void createContactsList()
     {
         ContentResolver resolver = getContentResolver();
-        ArrayList<ArrayList<String>> contacts = new ArrayList<ArrayList<String>>();
+        contacts = new ArrayList<ArrayList<String>>();
 
         Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
@@ -106,28 +150,24 @@ public class MainActivity extends AppCompatActivity {
             String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
             String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-            //Log.i("name", id + " = " + name);
-
-            Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{id}, null);
-
-                /*
-                while (phoneCursor.moveToNext()) {
-                    String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    Log.i("number:", phoneNumber);
-                }*/
-
             ArrayList<String> temp = new ArrayList<String>();
+            contactsNames.add(name);
             temp.add(id);
             temp.add(name);
             contacts.add(temp);
         }
+
+        contactNamesUse = new String[contactsNames.size()];
+        for(int i =0; i< contactsNames.size();i++)
+        {
+            contactNamesUse[i] = contactsNames.get(i);
+        }
+        checkedItems = new boolean[contacts.size()];
     }
 
-    public int getContactNumber(int id){
+    public String getContactNumber(int id){
 
         ContentResolver resolver = getContentResolver();
-        ArrayList<ArrayList<String>> contacts = new ArrayList<ArrayList<String>>();
-
         Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
         cursor.moveToFirst();
@@ -138,9 +178,8 @@ public class MainActivity extends AppCompatActivity {
         Cursor phoneCursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{ident}, null);
 
         phoneCursor.moveToFirst();
-        int phoneNumber = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-
-        Log.i("number", Integer.toString(phoneNumber));
+        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+       // Log.i("number", Integer.toString(phoneNumber));
         return phoneNumber;
     }
 
