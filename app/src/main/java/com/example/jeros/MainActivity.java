@@ -163,16 +163,30 @@ public class MainActivity extends AppCompatActivity {
                 String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                Cursor phoneCursor = resolver.query(    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+
+                Cursor phones = resolver.query(    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                                                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
                                                         new String[]{id}, null);
 
+                String phoneNumber = "";
+
+                while (phones.moveToNext()) {
+                    String number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    int type = phones.getInt(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+                    switch (type) {
+                        case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+                            // do something with the Home number here...
+                            break;
+                        case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+                            phoneNumber = number;
+                            break;
+                        case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+                            // do something with the Work number here...
+                            break;
+                    }
+                }
                 ContactsClass contactsClassTemp = new ContactsClass(id);
                 contactsClassTemp.setName(name);
-
-                phoneCursor.moveToFirst();
-                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-
                 contactsClassTemp.setPhoneNumber1(phoneNumber);
 
                 listContacts.add(contactsClassTemp);
