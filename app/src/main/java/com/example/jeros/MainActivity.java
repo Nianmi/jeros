@@ -167,11 +167,11 @@ public class MainActivity extends AppCompatActivity {
             {
                 if(i == 0)
                 {
-                    //sendSMS(listShuffledContacts.get(i).getName(),listShuffledContacts.get(listShuffledContacts.size()).getPhoneNumber1());
+                    sendSmS(listShuffledContacts.get(i).getName(),listShuffledContacts.get(listShuffledContacts.size()-1).getPhoneNumber1());
                     Log.i("SMS: ", "1 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(listShuffledContacts.size()-1).getName());
                 }
                 else{
-                    //sendSMS(listShuffledContacts.get(i).getName(),listShuffledContacts.get(i-1).getPhoneNumber1());
+                    sendSmS(listShuffledContacts.get(i).getName(),listShuffledContacts.get(i-1).getPhoneNumber1());
                     Log.i("SMS: ", "2 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(i-1).getName());
                 }
             }
