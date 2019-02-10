@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> outputNames = new ArrayList<>();
     ArrayList<Integer> outputIDs = new ArrayList<>();
     ArrayList<ContactsClass> listContacts = new ArrayList<>();
+    ArrayList<ContactsClass> listSelectedContacts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,10 +124,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int which) {
                     for (int i = 0; i < outputIDs.size(); i++) {
-                        outputNames.add(contactNamesUse[outputIDs.get(i)]);
                         Log.i("debug", "Name:" + listContacts.get(outputIDs.get(i)).getName());
                         Log.i("debug", "ID:" + listContacts.get(outputIDs.get(i)).getId());
                         Log.i("debug", "Nummer:" + listContacts.get(outputIDs.get(i)).getPhoneNumber1());
+                        listSelectedContacts.add(listContacts.get(outputIDs.get(i)));
                     }
                 }
             });
