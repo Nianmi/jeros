@@ -124,10 +124,9 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialogInterface, int which) {
                     for (int i = 0; i < outputIDs.size(); i++) {
                         outputNames.add(contactNamesUse[outputIDs.get(i)]);
-                        Log.i("debug", "Name:" + contactNamesUse[outputIDs.get(i)]);
-                        Log.i("debug", "ID:" + outputIDs.get(i));
-                        //String number = getContactNumber(outputIDs.get(i) - 1);  //getCOntactNumber funktioniert nicht
-                        //Log.i("debug", "Nummer:" + number);
+                        Log.i("debug", "Name:" + listContacts.get(outputIDs.get(i)).getName());
+                        Log.i("debug", "ID:" + listContacts.get(outputIDs.get(i)).getId());
+                        Log.i("debug", "Nummer:" + listContacts.get(outputIDs.get(i)).getPhoneNumber1());
                     }
                 }
             });
@@ -167,9 +166,12 @@ public class MainActivity extends AppCompatActivity {
                                                         new String[]{id}, null);
 
                 ContactsClass contactsClassTemp = new ContactsClass(id);
-
                 contactsClassTemp.setName(name);
-                //contactsClassTemp.setPhoneNumber1();
+
+                phoneCursor.moveToFirst();
+                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                contactsClassTemp.setPhoneNumber1(phoneNumber);
 
                 listContacts.add(contactsClassTemp);
             }
