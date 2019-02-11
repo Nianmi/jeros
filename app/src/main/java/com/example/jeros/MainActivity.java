@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         helpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //HELP METHODE/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                gameDescription();
             }
         });
 
@@ -150,8 +150,26 @@ public class MainActivity extends AppCompatActivity {
         linearLayout.addView(editText);
     }
 
+    public void gameDescription(){
+        //do sötima no was gschides schrieba xD
+        String description = "In dem spiel geht es darum ander leute zu küssen ohne " +
+                "das die andern Mittspiel sehen " +
+                "Um das Spiel zu intizialisiren muss man kontäkte auswhälen und dan Start " +
+                "game drücken dan erhalt jeder mitspieler ein SMS mit der person die man küssen muss ";
+
+        scrollView.removeAllViews();
+        linearLayout.removeAllViews();
+
+        TextView editText = new TextView(getApplicationContext());
+        editText.setKeyListener(null);
+        editText.setText(description);
+
+        linearLayout.addView(editText);
+
+        scrollView.addView(linearLayout);
+    }
+
     public void startGame(){
-        Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_LONG).show();
         if(listSelectedContacts.size() < 3){
             Log.i("DEBUG: ", "TEST");
         }
@@ -191,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
                                                         new String[]{id}, null);
 
                 String phoneNumber = "";
+                String defPhoneNumber = "";
 
                 while (phones.moveToNext()) {
                     String number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
@@ -205,11 +224,20 @@ public class MainActivity extends AppCompatActivity {
                         case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
                             // do something with the Work number here...
                             break;
+                        default:
+                            defPhoneNumber = number;
+                            break;
                     }
                 }
                 ContactsClass contactsClassTemp = new ContactsClass(id);
                 contactsClassTemp.setName(name);
-                contactsClassTemp.setPhoneNumber1(phoneNumber);
+
+                if(phoneNumber != ""){
+                    contactsClassTemp.setPhoneNumber1(phoneNumber);
+                }else{
+                    contactsClassTemp.setPhoneNumber1(defPhoneNumber);
+                }
+
 
                 listContacts.add(contactsClassTemp);
             }
