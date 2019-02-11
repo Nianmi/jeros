@@ -32,7 +32,7 @@ import java.util.Comparator;
 public class MainActivity extends AppCompatActivity {
 
     Button SMSButtonDe, ContacsButtonDe;
-    Button selectContact, testButton2, testButton3, testButton4;
+    Button selectContact, helpBtn, startGameBtn;
     String[] contactNamesUse;
     boolean[] checkedItems;
 
@@ -55,15 +55,12 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, 1);
 
         //Init GUI
-        SMSButtonDe = (Button) findViewById(R.id.debugSMSButton);
-        ContacsButtonDe = (Button) findViewById(R.id.debugContacs);
         selectContact = (Button) findViewById(R.id.button1);
-        testButton2 = (Button) findViewById(R.id.button2);
-        testButton3 = (Button) findViewById(R.id.button3);
-        testButton4 = (Button) findViewById(R.id.button4);
+        startGameBtn = (Button) findViewById(R.id.button4);
+        helpBtn = (Button) findViewById(R.id.button4);
 
         // Find the ScrollView
-          scrollView = (ScrollView) findViewById(R.id.scrollView1);
+        scrollView = (ScrollView) findViewById(R.id.scrollView1);
         // Create a LinearLayout element
         linearLayout = new LinearLayout(getApplicationContext());
         linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -74,36 +71,18 @@ public class MainActivity extends AppCompatActivity {
                 selectContactFcn();
             }
         });
-        testButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                testFinction2();
-            }
-        });
-        testButton3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                testFinction3();
-            }
-        });
-        testButton4.setOnClickListener(new View.OnClickListener() {
+
+        startGameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startGame();
             }
         });
 
-        SMSButtonDe.setOnClickListener(new View.OnClickListener() {
+        helpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-            }
-        });
-
-        ContacsButtonDe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+                //HELP METHODE/////////////////////////////////////////////////////////////////////////////////////////////////////////////
             }
         });
 
@@ -171,37 +150,28 @@ public class MainActivity extends AppCompatActivity {
         linearLayout.addView(editText);
     }
 
-    public void testFinction2(){
-        for (ContactsClass conti : listContacts) {
-            Log.i("Id and Name: ", conti.getId() + conti.getName());
-        }
-    }
-    public void testFinction3(){
-        Toast.makeText(getApplicationContext(), "testFunction3", Toast.LENGTH_LONG).show();
-    }
     public void startGame(){
+        Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_LONG).show();
         if(listSelectedContacts.size() < 3){
-            Toast.makeText(this, "You need at least 3 players", Toast.LENGTH_LONG).show();
+            Log.i("DEBUG: ", "TEST");
         }
         else{
-            //Log.i("SizeCheck", ""+listShuffledContacts.size());
             listShuffledContacts.clear();
-            //Log.i("SizeCheck", ""+listShuffledContacts.size());
             listShuffledContacts.addAll(listSelectedContacts);
-            //Log.i("SizeCheck", ""+listShuffledContacts.size());
             Collections.shuffle(listShuffledContacts);
             for(int i = 0; i< listShuffledContacts.size(); i++)
             {
                 if(i == 0)
                 {
                     sendSmS(listShuffledContacts.get(i).getName(),listShuffledContacts.get(listShuffledContacts.size()-1).getPhoneNumber1());
-                    //Log.i("SMS: ", "1 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(listShuffledContacts.size()-1).getName());
+                    Log.i("SMS: ", "1 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(listShuffledContacts.size()-1).getName());
                 }
                 else{
                     sendSmS(listShuffledContacts.get(i).getName(),listShuffledContacts.get(i-1).getPhoneNumber1());
-                    //Log.i("SMS: ", "2 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(i-1).getName());
+                    Log.i("SMS: ", "2 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(i-1).getName());
                 }
             }
+            Toast.makeText(getApplicationContext(), "SMS sent successfully", Toast.LENGTH_LONG).show();
         }
     }
 
