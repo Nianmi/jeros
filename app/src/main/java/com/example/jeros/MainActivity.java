@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         //Init GUI
         selectContact = (Button) findViewById(R.id.button1);
         startGameBtn = (Button) findViewById(R.id.button4);
-        helpBtn = (Button) findViewById(R.id.button4);
+        helpBtn = (Button) findViewById(R.id.button5);
 
         // Find the ScrollView
         scrollView = (ScrollView) findViewById(R.id.scrollView1);
