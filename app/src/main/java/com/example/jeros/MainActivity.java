@@ -32,7 +32,7 @@ import java.util.Comparator;
 public class MainActivity extends AppCompatActivity {
 
     Button SMSButtonDe, ContacsButtonDe;
-    Button selectContact, helpBtn, startGameBtn;
+    Button selectContact, helpBtn, startGameBtn, helpTglBtn;
     String[] contactNamesUse;
     boolean[] checkedItems;
 
@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         selectContact = (Button) findViewById(R.id.button1);
         startGameBtn = (Button) findViewById(R.id.button4);
         helpBtn = (Button) findViewById(R.id.button5);
+        helpTglBtn = (Button) findViewById(R.id.helpToggleButton);
 
         // Find the ScrollView
         scrollView = (ScrollView) findViewById(R.id.scrollView1);
