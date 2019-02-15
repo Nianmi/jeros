@@ -123,9 +123,9 @@ public class MainActivity extends AppCompatActivity {
                     linearLayout.removeAllViews();
                     listSelectedContacts.clear();
                     for (int i = 0; i < outputIDs.size(); i++) {
-                        Log.i("debug", "Name:" + listContacts.get(outputIDs.get(i)).getName());
-                        Log.i("debug", "ID:" + listContacts.get(outputIDs.get(i)).getId());
-                        Log.i("debug", "Nummer:" + listContacts.get(outputIDs.get(i)).getPhoneNumber1());
+                      //  Log.i("debug", "Name:" + listContacts.get(outputIDs.get(i)).getName());
+                      //  Log.i("debug", "ID:" + listContacts.get(outputIDs.get(i)).getId());
+                      //  Log.i("debug", "Nummer:" + listContacts.get(outputIDs.get(i)).getPhoneNumber1());
                         listSelectedContacts.add(listContacts.get(outputIDs.get(i)));
                         addTextView(listContacts.get(outputIDs.get(i)).getName(),  listContacts.get(outputIDs.get(i)).getPhoneNumber1());
                     }
@@ -183,11 +183,11 @@ public class MainActivity extends AppCompatActivity {
                 if(i == 0)
                 {
                     sendSmS(listShuffledContacts.get(i).getName(),listShuffledContacts.get(listShuffledContacts.size()-1).getPhoneNumber1());
-                    Log.i("SMS: ", "1 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(listShuffledContacts.size()-1).getName());
+                  //  Log.i("SMS: ", "1 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(listShuffledContacts.size()-1).getName());
                 }
                 else{
                     sendSmS(listShuffledContacts.get(i).getName(),listShuffledContacts.get(i-1).getPhoneNumber1());
-                    Log.i("SMS: ", "2 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(i-1).getName());
+                  //  Log.i("SMS: ", "2 Sending: " + listShuffledContacts.get(i).getName()+ " to " + listShuffledContacts.get(i-1).getName());
                 }
             }
             Toast.makeText(getApplicationContext(), "SMS sent successfully", Toast.LENGTH_LONG).show();
