@@ -31,11 +31,11 @@ import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button SMSButtonDe, ContacsButtonDe;
-    Button selectContact, helpBtn, startGameBtn, helpTglBtn;
+    Button selectContact, startGameBtn, helpTglBtn;
     String[] contactNamesUse;
     boolean[] checkedItems;
     boolean helpOpen = false;
+    boolean firstTimeAddingContacts = true;
 
     ArrayList<Integer> outputIDs = new ArrayList<>();
     ArrayList<ContactsClass> listContacts = new ArrayList<>();
@@ -52,13 +52,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //All Premissions
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 1);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, 1);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.READ_CONTACTS}, 1);
 
         //Init GUI
         selectContact = (Button) findViewById(R.id.button1);
         startGameBtn = (Button) findViewById(R.id.button4);
-        helpBtn = (Button) findViewById(R.id.button5);
         helpTglBtn = (Button) findViewById(R.id.helpToggleButton);
 
         // Find the ScrollView
@@ -66,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         // Create a LinearLayout element
         linearLayout = new LinearLayout(getApplicationContext());
         linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+        //createContactsList();
 
         selectContact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,13 +78,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startGame();
-            }
-        });
-
-        helpBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameDescription();
             }
         });
 
@@ -102,20 +95,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        createContactsList();
-
-        checkedItems = new boolean[listContacts.size()];
-
-        contactNamesUse = new String[listContacts.size()];
-
-        for(int i =0; i< listContacts.size(); i++)
-        {
-            contactNamesUse[i] = listContacts.get(i).getName();
-        }
     }
 
+
     public void selectContactFcn(){
+        if(firstTimeAddingContacts == true){
+         createContactsList();
+            firstTimeAddingContacts = false;
+        }
         try{
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
             mBuilder.setTitle("Choose Contacts...");
@@ -276,6 +263,16 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
+
+            checkedItems = new boolean[listContacts.size()];
+
+            contactNamesUse = new String[listContacts.size()];
+
+            for(int i =0; i< listContacts.size(); i++)
+            {
+                contactNamesUse[i] = listContacts.get(i).getName();
+            }
+
         }
         catch (Exception e){
             boolean permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED;
