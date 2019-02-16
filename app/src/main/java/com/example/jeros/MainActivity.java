@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     Button selectContact, helpBtn, startGameBtn, helpTglBtn;
     String[] contactNamesUse;
     boolean[] checkedItems;
+    boolean helpOpen = false;
 
     ArrayList<Integer> outputIDs = new ArrayList<>();
     ArrayList<ContactsClass> listContacts = new ArrayList<>();
@@ -87,6 +88,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        helpTglBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!helpOpen){
+                    gameDescription();
+                    helpOpen = !helpOpen;
+                }else
+                {
+                    redraw();
+                    helpOpen = !helpOpen;
+                }
+
+            }
+        });
+
         createContactsList();
 
         checkedItems = new boolean[listContacts.size()];
@@ -123,9 +139,6 @@ public class MainActivity extends AppCompatActivity {
                     linearLayout.removeAllViews();
                     listSelectedContacts.clear();
                     for (int i = 0; i < outputIDs.size(); i++) {
-                      //  Log.i("debug", "Name:" + listContacts.get(outputIDs.get(i)).getName());
-                      //  Log.i("debug", "ID:" + listContacts.get(outputIDs.get(i)).getId());
-                      //  Log.i("debug", "Nummer:" + listContacts.get(outputIDs.get(i)).getPhoneNumber1());
                         listSelectedContacts.add(listContacts.get(outputIDs.get(i)));
                         addTextView(listContacts.get(outputIDs.get(i)).getName(),  listContacts.get(outputIDs.get(i)).getPhoneNumber1());
                     }
@@ -143,6 +156,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void redraw(){
+        scrollView.removeAllViews();
+        linearLayout.removeAllViews();
+        listSelectedContacts.clear();
+        for (int i = 0; i < outputIDs.size(); i++) {
+            listSelectedContacts.add(listContacts.get(outputIDs.get(i)));
+            addTextView(listContacts.get(outputIDs.get(i)).getName(),  listContacts.get(outputIDs.get(i)).getPhoneNumber1());
+        }
+        // Add the LinearLayout element to the ScrollView
+        scrollView.addView(linearLayout);
+    }
+
     public void addTextView(String text, String phoneNumber){
         EditText editText = new EditText(getApplicationContext());
         editText.setKeyListener(null);
@@ -152,11 +177,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void gameDescription(){
-        //do sötima no was gschides schrieba xD
-        String description = "In dem spiel geht es darum ander leute zu küssen ohne " +
-                "das die andern Mittspiel sehen " +
-                "Um das Spiel zu intizialisiren muss man kontäkte auswhälen und dan Start " +
-                "game drücken dan erhalt jeder mitspieler ein SMS mit der person die man küssen muss ";
+        String description = "In dem spiel geht es darum sein Ziel auf die Backe zu küssen ohne, " +
+                "dass die anderen Mittspieler das sehen. Falls sie es doch sehen scheidet derjenige, der erwischt wurde aus. Wenn dass Ziel erfolgreich geküsst wurde scheidet es aus und " +
+                "muss sein Ziel demjenigen abgeben der Ihn geküsst hat. Derjenige der als letzter noch im Spiel ist, gewinnt. "+
+                "Um das Spiel zu starten muss man alle Mitspieler auswhälen und dann den \"Start game\" " +
+                "Knopf drücken, dann erhält jeder Mitspieler eine SMS mit seinem Ziel, alse mit dem Namen der Person die er küssen muss. ";
 
         scrollView.removeAllViews();
         linearLayout.removeAllViews();
